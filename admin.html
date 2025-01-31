@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Administrar productos y categorías">
+    <title>Administrador - Gestionar Tienda</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
+    <style>
+        /* Background Image with Blur */
+        .background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('images/background.webp') no-repeat center center fixed;
+            background-size: cover;
+            filter: blur(5px); /* Blur only the background */
+            z-index: -1; /* Keeps it behind content */
+        }
+
+        /* Add a shadow overlay */
+        .background::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.3); /* Dark overlay for contrast */
+            box-shadow: inset 0px 0px 50px rgba(0, 0, 0, 0.5); /* Soft shadow effect */
+            z-index: -1;
+        }
+
+        /* Navigation Bar */
+        nav {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.2); /* Light transparent background */
+            padding: 15px 0;
+            text-align: center;
+            backdrop-filter: blur(10px); /* Frosted glass effect */
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        nav ul li {
+            margin: 0 20px;
+        }
+
+        nav ul li a {
+            color: white; /* Ensure text is white */
+            text-decoration: none;
+            font-size: 1.2rem;
+            font-weight: bold;
+            transition: 0.3s ease;
+        }
+
+        nav ul li a:hover {
+            text-decoration: underline;
+        }
+
+        /* Category Bubbles (Above Products) */
+        .category-bubbles {
+            text-align: center;
+            margin-top: 20px;
+            margin-bottom: 30px;
+        }
+
+        .category-bubbles .bubble {
+            display: inline-block;
+            background-color: white;
+            color: black;
+            border-radius: 50px;
+            padding: 10px 20px;
+            margin: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s ease;
+        }
+
+        .category-bubbles .bubble:hover {
+            background-color: #ff6600;
+            color: white;
+        }
+
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 20px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
+            backdrop-filter: blur(5px); /* Frosted glass effect */
+        }
+
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            font-size: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Admin Panel Container */
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .category-list {
+            margin-top: 30px;
+            padding: 10px;
+        }
+
+        .category-list ul {
+            list-style-type: none;
+        }
+
+        .category-list li {
+            margin: 10px 0;
+            padding: 5px;
+            background-color: #f4f4f4;
+            border-radius: 5px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Background (Blurred with Shadow) -->
+    <div class="background"></div>
+
+    <!-- Navigation (On Top, Light) -->
+    <nav>
+        <ul>
+            <li><a href="index.html">Inicio</a></li>
+            <li><a href="shop.html">Tienda</a></li>
+            <li><a href="admin.html">Administrador</a></li>
+            <li><a href="contact.html">Contacto</a></li>
+        </ul>
+    </nav>
+
+    <!-- Admin Panel (Center Content) -->
+    <div class="container">
+        <h2 style="text-align: center; color: white; text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);">Panel de Administración</h2>
+
+        <!-- Add Category Form -->
+        <div class="form-group">
+            <label for="categoryName">Nombre de la categoría:</label>
+            <input type="text" id="categoryName" placeholder="Ejemplo: Gadgets, Ropa" />
+            <button id="addCategoryBtn">Añadir Categoría</button>
+        </div>
+
+        <h3 style="color: white; text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);">Categorías Disponibles</h3>
+        <div class="category-bubbles" id="categoryBubbles">
+            <!-- Categories will be dynamically inserted here -->
+        </div>
+
+        <!-- Add Product Form -->
+        <div class="form-group">
+            <h3 style="color: white; text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);">Agregar Producto</h3>
+            <label for="productName">Nombre del Producto:</label>
+            <input type="text" id="productName" placeholder="Nombre del Producto" />
+
+            <label for="productPrice">Precio:</label>
+            <input type="number" id="productPrice" placeholder="Precio del Producto" />
+
+            <label for="productCategory">Categoría:</label>
+            <select id="productCategory">
+                <!-- Categories will be populated here -->
+            </select>
+
+            <label for="productDescription">Descripción:</label>
+            <textarea id="productDescription" placeholder="Descripción del Producto"></textarea>
+
+            <label for="productImage">Imagen URL:</label>
+            <input type="text" id="productImage" placeholder="URL de la imagen" />
+
+            <button id="addProductBtn">Añadir Producto</button>
+        </div>
+
+        <h3 style="color: white; text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);">Productos Añadidos</h3>
+        <div id="productList">
+            <!-- Products will be dynamically displayed here -->
+        </div>
+    </div>
+
+    <script>
+        // Retrieve categories and products from localStorage or initialize as empty arrays
+        let categories = JSON.parse(localStorage.getItem('categories')) || [];
+        let products = JSON.parse(localStorage.getItem('products')) || [];
+
+        // Display categories as bubbles
+        function displayCategories() {
+            const categoryContainer = document.getElementById("categoryBubbles");
+            categoryContainer.innerHTML = ''; // Clear current categories
+
+            categories.forEach(category => {
+                const categoryBubble = document.createElement('span');
+                categoryBubble.classList.add('bubble');
+                categoryBubble.textContent = category;
+                categoryBubble.addEventListener('click', () => filterByCategory(category));
+                categoryContainer.appendChild(categoryBubble);
+            });
+
+            populateCategorySelect(); // Update the category select options
+        }
+
+        // Function to add a category
+        document.getElementById('addCategoryBtn').addEventListener('click', () => {
+            const categoryName = document.getElementById('categoryName').value.trim();
+
+            if (categoryName && !categories.includes(categoryName)) {
+                categories.push(categoryName);
+                localStorage.setItem('categories', JSON.stringify(categories));
+                displayCategories();
+                document.getElementById('categoryName').value = ''; // Clear input field
+            } else {
+                alert('La categoría ya existe o está vacía.');
+            }
+        });
+
+        // Function to add a product
+        document.getElementById('addProductBtn').addEventListener('click', () => {
+            const productName = document.getElementById('productName').value.trim();
+            const productPrice = document.getElementById('productPrice').value.trim();
+            const productCategory = document.getElementById('productCategory').value;
+            const productDescription = document.getElementById('productDescription').value.trim();
+            const productImage = document.getElementById('productImage').value.trim();
+
+            if (productName && productPrice && productCategory && productDescription && productImage) {
+                const newProduct = {
+                    name: productName,
+                    price: productPrice,
+                    category: productCategory,
+                    description: productDescription,
+                    image: productImage
+                };
+                products.push(newProduct);
+                localStorage.setItem('products', JSON.stringify(products));
+                displayProducts();
+            } else {
+                alert('Todos los campos deben ser completos.');
+            }
+        });
+
+        // Function to display products in the admin page
+        function displayProducts() {
+            const productList = document.getElementById('productList');
+            productList.innerHTML = ''; // Clear current products
+
+            products.forEach(product => {
+                const productItem = document.createElement('div');
+                productItem.innerHTML = `
+                    <h4>${product.name}</h4>
+                    <p>Price: $${product.price}</p>
+                    <p>Category: ${product.category}</p>
+                    <p>${product.description}</p>
+                    <img src="${product.image}" alt="${product.name}" style="width: 100px; height: auto;">
+                    <hr />
+                `;
+                productList.appendChild(productItem);
+            });
+        }
+
+        // Function to populate category select dropdown for products
+        function populateCategorySelect() {
+            const categorySelect = document.getElementById('productCategory');
+            categorySelect.innerHTML = ''; // Clear current options
+
+            categories.forEach(category => {
+                const option = document.createElement('option');
+                option.value = category;
+                option.textContent = category;
+                categorySelect.appendChild(option);
+            });
+        }
+
+        // Initial display
+        displayCategories();
+        displayProducts();
+
+    </script>
+
+</body>
+</html>

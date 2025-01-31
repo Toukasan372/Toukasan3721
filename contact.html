@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Formulario de contacto">
+    <title>Contacto</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
+</head>
+<body>
+    <nav class="container-fluid">
+        <ul>
+            <li><strong>Tienda Electrónica</strong></li>
+        </ul>
+        <ul>
+            <li><a href="index.html">Inicio</a></li>
+            <li><a href="shop.html">Tienda</a></li>
+            <li><a href="admin.html">Administrador</a></li>
+            <li><a href="contact.html">Contacto</a></li>
+        </ul>
+    </nav>
+
+    <main class="container">
+        <div class="grid">
+            <section>
+                <hgroup>
+                    <h2>Contacto</h2>
+                    <h3>¡Queremos saber de ti!</h3>
+                </hgroup>
+                <form action="#" method="POST">
+                    <label for="name">Nombre:</label>
+                    <input type="text" id="name" name="name" placeholder="Tu nombre" required>
+
+                    <label for="email">Correo electrónico:</label>
+                    <input type="email" id="email" name="email" placeholder="Tu correo electrónico" required>
+
+                    <label for="message">Mensaje:</label>
+                    <textarea id="message" name="message" placeholder="Escribe tu mensaje aquí" required></textarea>
+
+                    <button type="submit">Enviar mensaje</button>
+                </form>
+            </section>
+        </div>
+    </main>
+
+    <footer class="container">
+        <small><a href="#">Política de privacidad</a> • <a href="#">Términos de servicio</a></small>
+    </footer>
+</body>
+</html>

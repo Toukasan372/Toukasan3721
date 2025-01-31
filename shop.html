@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Compra productos electrónicos de alta calidad">
+    <title>Tienda - Productos</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
+    <style>
+        /* Background Image with Blur */
+        .background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('images/background.webp') no-repeat center center fixed;
+            background-size: cover;
+            filter: blur(5px);
+            z-index: -1;
+        }
+
+        /* Navigation Bar */
+        nav {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 15px 0;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        nav ul li {
+            margin: 0 20px;
+        }
+
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-size: 1.2rem;
+            font-weight: bold;
+            transition: 0.3s ease;
+        }
+
+        nav ul li a:hover {
+            text-decoration: underline;
+        }
+
+        /* Category Bubbles */
+        .category-bubbles {
+            text-align: center;
+            margin-top: 20px;
+            margin-bottom: 30px;
+        }
+
+        .category-bubbles .bubble {
+            display: inline-block;
+            background-color: white;
+            color: black;
+            border-radius: 50px;
+            padding: 10px 20px;
+            margin: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s ease;
+        }
+
+        .category-bubbles .bubble:hover {
+            background-color: #ff6600;
+            color: white;
+        }
+
+        /* Product Grid */
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            padding: 20px;
+            justify-items: center;
+            align-items: start;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Product Card */
+        .product-card {
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(8px);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            color: white;
+        }
+
+        .product-card img {
+            width: 100%;
+            height: auto;
+            object-fit: cover;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .product-card figcaption {
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: white;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+            padding: 10px;
+        }
+
+        .product-card p {
+            color: white;
+            padding: 0 10px;
+            font-size: 1rem;
+            margin-top: 10px;
+        }
+
+        /* "Add to Cart" Button */
+        .product-card .button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin-top: 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.3s ease;
+        }
+
+        .product-card .button::before {
+            content: "🛒";
+            font-size: 1.2rem;
+        }
+
+        .product-card .button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <!-- Background -->
+    <div class="background"></div>
+
+    <!-- Navigation -->
+    <nav>
+        <ul>
+            <li><a href="index.html">Inicio</a></li>
+            <li><a href="shop.html">Tienda</a></li>
+            <li><a href="admin.html">Administrador</a></li>
+            <li><a href="contact.html">Contacto</a></li>
+        </ul>
+    </nav>
+
+    <!-- Category Bubbles -->
+    <div class="category-bubbles" id="categoryBubbles">
+        <!-- Categories will be dynamically inserted here -->
+    </div>
+
+    <!-- Product Grid -->
+    <main class="container">
+        <h2 style="text-align: center; color: white;">Nuestros Productos</h2>
+        <div class="product-grid" id="productGrid">
+            <!-- Products will be dynamically inserted here -->
+        </div>
+    </main>
+
+    <footer class="container">
+        <small><a href="#">Política de privacidad</a> • <a href="#">Términos de servicio</a></small>
+    </footer>
+
+    <script>
+        // Fetch categories and products from localStorage
+        let categories = JSON.parse(localStorage.getItem('categories')) || [];
+        let products = JSON.parse(localStorage.getItem('products')) || [];
+
+        // Function to display categories as bubbles
+        function displayCategories() {
+            const categoryContainer = document.getElementById("categoryBubbles");
+            categoryContainer.innerHTML = ''; // Clear previous categories
+
+            categories.forEach(category => {
+                const categoryBubble = document.createElement('span');
+                categoryBubble.classList.add('bubble');
+                categoryBubble.textContent = category;
+                categoryBubble.addEventListener('click', () => filterByCategory(category));
+                categoryContainer.appendChild(categoryBubble);
+            });
+        }
+
+        // Function to display products
+        function displayProducts(category = "all") {
+            const productContainer = document.getElementById("productGrid");
+            productContainer.innerHTML = ''; // Clear current products
+
+            const filteredProducts = category === "all" ? products : products.filter(p => p.category === category);
+
+            filteredProducts.forEach(product => {
+                const productElement = document.createElement('div');
+                productElement.classList.add('product-card');
+                productElement.innerHTML = `
+                    <figure>
+                        <img src="${product.image}" alt="${product.name}">
+                        <figcaption>${product.name} - $${product.price}</figcaption>
+                    </figure>
+                    <p>${product.description}</p>
+                    <button class="button">Añadir al carrito</button>
+                `;
+                productContainer.appendChild(productElement);
+            });
+        }
+
+        // Filter products by category
+        function filterByCategory(category) {
+            displayProducts(category);
+        }
+
+        // Initial display
+        displayCategories();
+        displayProducts("all"); // Show all products by default
+    </script>
+
+</body>
+</html>
